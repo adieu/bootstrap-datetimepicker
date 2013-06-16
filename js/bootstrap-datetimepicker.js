@@ -193,6 +193,7 @@
 		}
 
 		this.todayBtn = (options.todayBtn || this.element.data('date-today-btn') || false);
+		this.alldayBtn = (options.alldayBtn || this.element.data('date-allday-btn') || false);
 		this.todayHighlight = (options.todayHighlight || this.element.data('date-today-highlight') || false);
 
 		this.weekStart = ((options.weekStart || this.element.data('date-weekstart') || dates[this.language].weekStart || 0) % 7);
@@ -538,6 +539,9 @@
 			this.picker.find('tfoot th.today')
 				.text(dates[this.language].today)
 				.toggle(this.todayBtn !== false);
+      this.picker.find('tfoot th.allday')
+          .text(dates[this.language].allday)
+          .toggle(this.alldayBtn !== false);
 			this.updateNavArrows();
 			this.fillMonths();
 			/*var prevMonth = UTCDate(year, month, 0,0,0,0,0);
@@ -841,6 +845,17 @@
 									this.hide();
 								}
 								break;
+							case 'allday':
+                var year    = this.viewDate.getUTCFullYear(),
+                    month   = this.viewDate.getUTCMonth(),
+                    day     = this.viewDate.getUTCDate(),
+								date = UTCDate(year, month, day, 0, 0, 0, 0);
+
+								this._setDate(date, null, true);
+								if (this.autoclose) {
+									this.hide();
+								}
+								break;
 						}
 						break;
 					case 'span':
@@ -962,7 +977,7 @@
 			}
 		},
 
-		_setDate: function (date, which) {
+		_setDate: function (date, which, allday) {
 			if (!which || which == 'date')
 				this.date = date;
 			if (!which || which == 'view')
@@ -983,7 +998,8 @@
 			}
 			this.element.trigger({
 				type: 'changeDate',
-				date: this.date
+				date: this.date,
+        allday: !allday ? false : true
 			});
 		},
 
@@ -1252,7 +1268,8 @@
 			monthsShort: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
 			meridiem:    ["am", "pm"],
 			suffix:      ["st", "nd", "rd", "th"],
-			today:       "Today"
+			today:       "Today",
+			allday:      "All Day"
 		}
 	};
 
@@ -1590,7 +1607,8 @@
 							  '</tr>' +
 			'</thead>',
 		contTemplate:     '<tbody><tr><td colspan="7"></td></tr></tbody>',
-		footTemplate:     '<tfoot><tr><th colspan="7" class="today"></th></tr></tfoot>'
+		footTemplate:     '<tfoot><tr><th colspan="7" class="today"></th></tr></tfoot>',
+		hoursTemplate:    '<tfoot><tr><th colspan="7" class="allday"></th></tr></tfoot>'
 	};
 	DPGlobal.template = '<div class="datetimepicker">' +
 		'<div class="datetimepicker-minutes">' +
@@ -1605,6 +1623,7 @@
 		DPGlobal.headTemplate +
 		DPGlobal.contTemplate +
 		DPGlobal.footTemplate +
+    DPGlobal.hoursTemplate+
 		'</table>' +
 		'</div>' +
 		'<div class="datetimepicker-days">' +
@@ -1642,6 +1661,7 @@
 		DPGlobal.headTemplateV3 +
 		DPGlobal.contTemplate +
 		DPGlobal.footTemplate +
+    DPGlobal.hoursTemplate+
 		'</table>' +
 		'</div>' +
 		'<div class="datetimepicker-days">' +
